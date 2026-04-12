@@ -1,0 +1,26 @@
+# Java
+**/target/
+**/.mvn/
+**/mvnw
+**/mvnw.cmd
+
+# Node
+**/node_modules/
+**/dist/
+**/coverage/
+
+# Env
+**/.env
+**/.env.*
+**/*.local
+
+# IDE / OS
+**/.vscode/
+**/.idea/
+**/.DS_Store
+**/Thumbs.db
+
+# Logs / temp
+**/*.log
+**/*.tmp
+**/*.swp
