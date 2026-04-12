@@ -1,23 +1,16 @@
-# Sử dụng JDK 21
 FROM eclipse-temurin:21-jdk-alpine
-
 WORKDIR /app
 
-# Copy file cấu hình maven trước để cache layer (tối ưu tốc độ build)
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+# Copy toàn bộ nội dung trong thư mục hiện tại (Root Directory) vào Docker
+COPY . .
 
-# Fix lỗi "not found" bằng cách chuyển đổi định dạng xuống dòng và cấp quyền
+# Xử lý file mvnw: xóa ký tự lạ và cấp quyền
 RUN tr -d '\r' < mvnw > mvnw_unix && mv mvnw_unix mvnw
 RUN chmod +x mvnw
 
-# Copy toàn bộ source code
-COPY src src
-
-# Build dự án
+# Build dự án (bỏ qua Test cho nhanh)
 RUN ./mvnw clean install -DskipTests
 
 # Chạy file jar
-# Teddy lưu ý: Hãy chắc chắn tên file .jar trong target/ là đúng nhé
+# Teddy kiểm tra: nếu build xong nó ra file tên khác thì sửa tên này nhé
 CMD ["java", "-jar", "target/service.ratings-0.0.1-SNAPSHOT.jar"]
