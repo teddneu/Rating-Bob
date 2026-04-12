@@ -1,24 +1,21 @@
-# Sử dụng JDK 21
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:21-jdk-alpine AS build
 
 WORKDIR /app
 
-# Copy toàn bộ dự án từ thư mục gốc vào Docker
+# Copy source vào đúng thư mục project gốc của backend
 COPY . .
 
-# Di chuyển hẳn vào thư mục backend nơi có file mvnw
-WORKDIR /app/service.ratings/service.ratings
+# Chuẩn hóa line ending của Maven wrapper và build jar
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
+RUN ./mvnw clean package -DskipTests
 
-# Tẩy sạch ký tự Windows và cấp quyền chạy
-RUN tr -d '\r' < mvnw > mvnw_unix && mv mvnw_unix mvnw
-RUN chmod +x mvnw
+FROM eclipse-temurin:21-jre-alpine
 
-# Chạy lệnh build của Maven
-RUN ./mvnw clean install -DskipTests
+WORKDIR /app
 
-# Cấu hình cổng cho Render
+COPY --from=build /app/target/service.ratings-0.0.1-SNAPSHOT.jar app.jar
+
 ENV PORT=10000
 EXPOSE 10000
 
-# Chạy file Jar
-CMD ["java", "-jar", "target/service.ratings-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["sh", "-c", "java -jar /app/app.jar --server.port=${PORT:-10000}"]
