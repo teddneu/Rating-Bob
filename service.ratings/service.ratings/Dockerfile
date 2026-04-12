@@ -1,23 +1,24 @@
+# Sử dụng JDK 21
 FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /app
 
-# Copy toàn bộ dự án vào Docker
+# Copy toàn bộ dự án từ thư mục gốc vào Docker
 COPY . .
 
-# Di chuyển vào thư mục chứa code backend thực sự
+# Di chuyển hẳn vào thư mục backend nơi có file mvnw
 WORKDIR /app/service.ratings/service.ratings
 
-# Xử lý file mvnw (lúc này chắc chắn tìm thấy vì đang đứng đúng chỗ)
+# Tẩy sạch ký tự Windows và cấp quyền chạy
 RUN tr -d '\r' < mvnw > mvnw_unix && mv mvnw_unix mvnw
 RUN chmod +x mvnw
 
-# Build dự án
+# Chạy lệnh build của Maven
 RUN ./mvnw clean install -DskipTests
 
-# Chạy file jar
-# Lưu ý: Cổng Render mặc định là 10000, Spring Boot nên nhận biến PORT này
+# Cấu hình cổng cho Render
 ENV PORT=10000
 EXPOSE 10000
 
+# Chạy file Jar
 CMD ["java", "-jar", "target/service.ratings-0.0.1-SNAPSHOT.jar"]
