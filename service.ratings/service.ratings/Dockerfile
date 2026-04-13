@@ -2,8 +2,13 @@ FROM eclipse-temurin:21-jdk-alpine AS build
 
 WORKDIR /app
 
-# Copy source vào đúng thư mục project gốc của backend
-COPY . .
+# Copy backend project từ build context gốc của repo
+COPY service.ratings/service.ratings/mvnw ./mvnw
+COPY service.ratings/service.ratings/mvnw.cmd ./mvnw.cmd
+COPY service.ratings/service.ratings/.mvn ./.mvn
+COPY service.ratings/service.ratings/pom.xml ./pom.xml
+COPY service.ratings/service.ratings/src ./src
+COPY service.ratings/service.ratings/HELP.md ./HELP.md
 
 # Chuẩn hóa line ending của Maven wrapper và build jar
 RUN sed -i 's/\r$//' mvnw && chmod +x mvnw

@@ -1,0 +1,12 @@
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+service.ratings/service.ratings/target/
+service.ratings/service.ratings/.mvn/
+service.ratings/service.ratings/.env
+
+.git/
+.idea/
+.vscode/
+*.log
