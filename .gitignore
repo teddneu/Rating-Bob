@@ -1,8 +1,5 @@
 # Java
 **/target/
-**/.mvn/
-**/mvnw
-**/mvnw.cmd
 
 # Node
 **/node_modules/
