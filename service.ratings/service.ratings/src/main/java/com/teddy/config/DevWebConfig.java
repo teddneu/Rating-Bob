@@ -1,11 +1,13 @@
 package com.teddy.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+@Profile("dev")
+public class DevWebConfig implements WebMvcConfigurer {
     
     /**
      * Cấu hình CORS để cho phép Frontend (port 5173) kết nối tới Backend (port 8082)

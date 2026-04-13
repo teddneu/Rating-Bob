@@ -1,11 +1,14 @@
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { Heart, Home, Gift, TrendingUp, Settings, LogOut, User } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { clearAuth, getAuthUser, LOGIN_PATH } from "../auth";
 
 export function Navigation() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const user = getAuthUser();
 
   const links = [
     { to: "/", label: "Home", icon: Home },
@@ -83,7 +86,9 @@ export function Navigation() {
                   >
                     <div className="p-4 border-b border-border">
                       <p className="text-foreground">Tài khoản của tôi</p>
-                      <p className="text-sm text-muted-foreground mt-1">vocuabob@gmail.com</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {user?.email ?? "vocuabob@gmail.com"}
+                      </p>
                     </div>
                     <div className="p-2">
                       <Link
@@ -94,14 +99,18 @@ export function Navigation() {
                         <Settings className="size-4" />
                         <span>Cài đặt</span>
                       </Link>
-                      <Link
-                        to="/auth/login"
-                        onClick={() => setShowUserMenu(false)}
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors text-destructive"
+                      <button
+                        type="button"
+                        onClick={() => {
+                          clearAuth();
+                          setShowUserMenu(false);
+                          navigate(LOGIN_PATH, { replace: true });
+                        }}
+                        className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors text-destructive"
                       >
                         <LogOut className="size-4" />
                         <span>Đăng xuất</span>
-                      </Link>
+                      </button>
                     </div>
                   </motion.div>
                 </>

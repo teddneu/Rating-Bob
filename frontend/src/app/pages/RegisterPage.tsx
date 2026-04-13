@@ -1,20 +1,45 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { motion } from "motion/react";
+import { authService } from "../services/api";
+import { getPostAuthRedirectPath, setAuthenticated } from "../auth";
+
+type RegisterLocationState = {
+  from?: {
+    pathname?: string;
+    search?: string;
+    hash?: string;
+  };
+};
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const postAuthPath = getPostAuthRedirectPath(location.state as RegisterLocationState | null);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/");
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const response = await authService.register(formData);
+      setAuthenticated(response.data);
+      navigate(postAuthPath, { replace: true });
+    } catch (err) {
+      setError("Không tạo được tài khoản. Email có thể đã tồn tại.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -90,11 +115,14 @@ export function RegisterPage() {
 
         <button
           type="submit"
-          className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+          disabled={isLoading}
+          className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
         >
-          Tạo Tài Khoản
+          {isLoading ? "Đang tạo..." : "Tạo Tài Khoản"}
         </button>
       </form>
+
+      {error && <p className="text-sm text-destructive mt-4">{error}</p>}
 
       <p className="text-center text-muted-foreground mt-6">
         Đã có tài khoản?{" "}
