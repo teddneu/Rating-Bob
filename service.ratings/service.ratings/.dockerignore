@@ -1,7 +1,8 @@
 target/
-.mvn/
 .git/
 .idea/
 .vscode/
 *.log
 *.tmp
+.env
+.env.*
