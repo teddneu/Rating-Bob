@@ -5,7 +5,10 @@ import axios from 'axios';
  * - Trong Vite, biến môi trường phải bắt đầu bằng VITE_
  * - Chúng ta dùng import.meta.env thay vì process.env
  */
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8082/api';
+const RAW_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8082';
+const BASE_URL = RAW_BASE_URL.endsWith('/api')
+  ? RAW_BASE_URL
+  : `${RAW_BASE_URL.replace(/\/$/, '')}/api`;
 
 const api = axios.create({
   baseURL: BASE_URL,
